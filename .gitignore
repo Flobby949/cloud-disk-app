@@ -1,4 +1,7 @@
 .vite
+.hbuilderx
+
+unpackage
 
 # Logs
 logs
