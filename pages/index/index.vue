@@ -1,3 +1,43 @@
+<script setup>
+import { ref } from "vue";
+	const list = ref([
+		{
+			type: 'dir',
+			name: '我的笔记',
+			create_time: '2023-07-01 20:26',
+			checked: true
+		},
+		{
+			type: 'image',
+			name: '风景.jpg',
+			create_time: '2023-07-01 21:26',
+			checked: true
+		},
+		{
+			type: 'video',
+			name: 'uniapp实战教程.mp4',
+			create_time: '2023-07-01 19:26',
+			checked: true
+		},
+		{
+			type: 'text',
+			name: '记事本.txt',
+			create_time: '2023-07-02 20:26',
+			checked: false
+		},
+		{
+			type: 'none',
+			name: '压缩包.rar',
+			create_time: '2023-07-02 22:26',
+			checked: false
+		}
+	])
+	
+	const handleSelect = (index) => {
+		list.value[index].checked = !list.value[index].checked
+	}
+</script>
+	
 <template>
 	<view>
 		<!-- 自定义导航栏 -->
@@ -29,49 +69,9 @@
 					class="bg-light font-md rounded-circle" placeholder="搜索文件">
 			</view>
 		</view>
+	
+		<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @my-select="handleSelect(index)">
+			
+		</f-list>
 	</view>
 </template>
-
-<script>
-	export default {
-		data() {
-			return {
-				title: 'Hello'
-			}
-		},
-		onLoad() {
-
-		},
-		methods: {
-
-		}
-	}
-</script>
-
-<style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
-</style>
