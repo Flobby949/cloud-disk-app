@@ -1,27 +1,19 @@
 <template>
 	<view>
 		<!-- 自定义导航栏 -->
-		<view>
-			<!-- 引入状态栏组件 -->
-			<uni-status-bar></uni-status-bar>
-			<!-- 自定义导航栏分三部分，flex布局，每个占一份 -->
-			<view class="flex bottom-border align-center bg-main" style="height: 40px;">
-				<view class="flex-1 flex p-3">
-					<text style="font-size: 32rpx;color: #fff;">首页</text>
+		<uni-nav-bar>
+			<template v-slot:left>
+				<text class="font-md ml-3 text-right text-white">首页</text>
+			</template>
+			<template v-slot:right>
+				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
+					<text class="iconfont icon-zengjia"></text>
 				</view>
-				<view class="flex flex-1 justify-center">
-					
+				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
+					<text class="iconfont icon-gengduo"></text>
 				</view>
-				<view class="flex-1 flex justify-end">
-					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
-						<text class="iconfont icon-zengjia"></text>
-					</view>
-					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
-						<text class="iconfont icon-gengduo"></text>
-					</view>
-				</view>
-			</view>
-		</view>
+			</template>
+		</uni-nav-bar>
 	</view>
 </template>
 
