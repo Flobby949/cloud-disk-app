@@ -14,6 +14,21 @@
 				</view>
 			</template>
 		</uni-nav-bar>
+		
+		<!-- 搜索框 -->
+		<view class="px-3 py-2">
+			<!-- 父相子绝 -->
+			<view class="position-relative">
+				<!-- 搜索图标绝对定位到父容器左侧 -->
+				<view class="flex align-center justify-center text-light-muted"
+					style="height: 70rpx; width: 70rpx; position: absolute; top: 0; left: 0;">
+					<text class="iconfont icon-sousuo"></text>
+				</view>
+				<!-- 输入框左侧留空，放置搜索图标 -->
+				<input type="text" style="height: 70rpx; padding-left: 70rpx;"
+					class="bg-light font-md rounded-circle" placeholder="搜索文件">
+			</view>
+		</view>
 	</view>
 </template>
 
