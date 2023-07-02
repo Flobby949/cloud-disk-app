@@ -46,6 +46,42 @@ import { computed, ref } from "vue";
 			item.checked = checked
 		})
 	}
+	
+	// 操作菜单
+	const actions = computed(() => {
+		// 超过一个，批量删除和下载
+		if (checkedList.value.length > 1) {
+			return [
+				{
+					icon: "icon-xiazai",
+					name: "下载"
+				},
+				{
+					icon: "icon-shanchu",
+					name: "删除"
+				}
+			]
+		} else {
+			return [
+				{
+					icon: "icon-xiazai",
+					name: "下载"
+				},
+				{
+					icon: "icon-fenxiang-1",
+					name: "分享"
+				},
+				{
+					icon: "icon-xiazai",
+					name: "下载"
+				},
+				{
+					icon: "icon-chongmingming",
+					name: "重命名"
+				}
+			]
+		}
+	})
 </script>
 	
 <template>
@@ -90,8 +126,24 @@ import { computed, ref } from "vue";
 			</view>
 		</view>
 	
-		<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @my-select="handleSelect(index)">
-			
-		</f-list>
+		<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @my-select="handleSelect(index)" />
+		
+		<!-- 底部操作条 -->
+		<!-- 选中元素才显示操作条 -->
+		<view v-if="checkedList.length > 0">
+			<!-- 设置操作条容器样式，固定顶部，flex布局，垂直拉升 -->
+			<view class="flex align-stretch bg-main text-white fixed-bottom" style="height: 115rpx;">
+				<!-- 根据操作菜单个数等分容器，:hover-class实现点击变色 -->
+				<view class="flex-1 flex flex-column align-center justify-center"
+					style="line-height: 1.5;"
+					v-for="(item, index) in actions"
+					:key="index"
+					hover-class="bg-hover-primary"
+					>
+					<text class="iconfont" :class="item.icon"></text>
+					{{ item.name }}
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
