@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 	const list = ref([
 		{
 			type: 'dir',
@@ -36,12 +36,16 @@ import { ref } from "vue";
 	const handleSelect = (index) => {
 		list.value[index].checked = !list.value[index].checked
 	}
+	
+	const checkedList = computed(() => {
+		return list.value.filter(item => item.checked)
+	})
 </script>
 	
 <template>
 	<view>
 		<!-- 自定义导航栏 -->
-		<uni-nav-bar>
+		<uni-nav-bar v-if="checkedList.length === 0">
 			<template v-slot:left>
 				<text class="font-md ml-3 text-right text-white">首页</text>
 			</template>
@@ -52,6 +56,16 @@ import { ref } from "vue";
 				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
 					<text class="iconfont icon-gengduo"></text>
 				</view>
+			</template>
+		</uni-nav-bar>
+		
+		<uni-nav-bar v-else>
+			<template #left>
+				<text class="font-md ml-3 text-light">取消</text>
+			</template>
+			<text class="font-md text-light font-weight-bold">已选中 {{ checkedList.length }} 个</text>
+			<template #right>
+				<text class="font-md mr-3 text-light">全选</text>
 			</template>
 		</uni-nav-bar>
 		
