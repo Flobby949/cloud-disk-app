@@ -40,6 +40,12 @@ import { computed, ref } from "vue";
 	const checkedList = computed(() => {
 		return list.value.filter(item => item.checked)
 	})
+	
+	const handleCheckAll = (checked) => {
+		list.value.forEach(item => {
+			item.checked = checked
+		})
+	}
 </script>
 	
 <template>
@@ -61,11 +67,11 @@ import { computed, ref } from "vue";
 		
 		<uni-nav-bar v-else>
 			<template #left>
-				<text class="font-md ml-3 text-light">取消</text>
+				<text class="font-md ml-3 text-light" @click="handleCheckAll(false)">取消</text>
 			</template>
 			<text class="font-md text-light font-weight-bold">已选中 {{ checkedList.length }} 个</text>
 			<template #right>
-				<text class="font-md mr-3 text-light">全选</text>
+				<text class="font-md mr-3 text-light" @click="handleCheckAll(true)">全选</text>
 			</template>
 		</uni-nav-bar>
 		
