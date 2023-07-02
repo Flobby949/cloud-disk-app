@@ -72,8 +72,8 @@ import { computed, ref } from "vue";
 					name: "分享"
 				},
 				{
-					icon: "icon-xiazai",
-					name: "下载"
+					icon: "icon-shanchu",
+					name: "删除"
 				},
 				{
 					icon: "icon-chongmingming",
@@ -82,6 +82,32 @@ import { computed, ref } from "vue";
 			]
 		}
 	})
+	
+	// 删除对话框
+	const deleteDialogRef = ref(null)
+	// 底部操作条处理
+	const handleBottomEvent = (item) => {
+		switch (item.name) {
+			case '删除':
+				deleteDialogRef.value.showPopup()
+				break
+			default:
+				break
+		}
+	}
+	const handleDeleteConfirm = () => {
+		// 对 list 过滤，留下未被选中的元素，选中即被删除
+		list.value = list.value.filter(item => !item.checked)
+		uni.showToast({
+			title: '删除成功',
+			icon: 'success'
+		})
+	}
+	
+	const handleCancel = () => {
+		console.log('取消');
+		// 执行取消后的逻辑
+	}
 </script>
 	
 <template>
@@ -139,11 +165,15 @@ import { computed, ref } from "vue";
 					v-for="(item, index) in actions"
 					:key="index"
 					hover-class="bg-hover-primary"
+					@click="handleBottomEvent(item)"
 					>
 					<text class="iconfont" :class="item.icon"></text>
 					{{ item.name }}
 				</view>
 			</view>
 		</view>
+		
+		<!-- 删除对话框 -->
+		<f-dialog ref="deleteDialogRef" :onConfirm="handleDeleteConfirm" :onCancel="handleCancel">是否删除选中文件</f-dialog>
 	</view>
 </template>
