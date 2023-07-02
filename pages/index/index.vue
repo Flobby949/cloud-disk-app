@@ -130,6 +130,70 @@ import { computed, ref } from "vue";
 		checkedList.value[0].name = renameValue.value
 		renameDialogRef.value.hidePopup()
 	}
+	
+	// 新增
+	const addList = ref([
+		{
+			icon: 'icon-file-b-6',
+			color: 'text-success',
+			name: '上传图片'
+		},
+		{
+			icon: 'icon-file-b-9',
+			color: 'text-primary',
+			name: '上传视频'
+		},
+		{
+			icon: 'icon-file-b-8',
+			color: 'text-muted',
+			name: '上传文件'
+		},
+		{
+			icon: 'icon-file-b-2',
+			color: 'text-warning',
+			name: '新建文件夹'
+		}
+	])
+	
+	const addPopup = ref(null)
+	// 打开操作条
+	const openAddPopup = () => {
+		addPopup.value.open()
+	}
+	
+	// 新建文件相关
+	const newDirDialogRef = ref(null)
+	const newDirName = ref('')
+	
+	// 处理添加操作条的各种事件
+	const handleAddEvent = (item) => {
+		addPopup.value.close()
+		switch (item.name) {
+			case '新建文件夹':
+				newDirDialogRef.value.showPopup()
+		}
+	}
+	
+	const handleNewDirConfirm = () => {
+		if (newDirName.value === '') {
+			return uni.showToast({
+				title: '文件夹名不能为空',
+				icon: 'none'
+			})
+		}
+		// 添加新文件
+		list.value.push({
+			type: 'dir',
+			name: newDirName.value,
+			create_time: '2023-07-03 01:32',
+			checked: false
+		})
+		return uni.showToast({
+			title: '新建文件夹成功',
+			icon: 'none'
+		})
+		newDirDialogRef.value.hidePopup()
+	}
 </script>
 	
 <template>
@@ -140,11 +204,13 @@ import { computed, ref } from "vue";
 				<text class="font-md ml-3 text-right text-white">首页</text>
 			</template>
 			<template v-slot:right>
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
-					<text class="iconfont icon-zengjia"></text>
-				</view>
-				<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
-					<text class="iconfont icon-gengduo"></text>
+				<view class="flex flex-row">
+					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openAddPopup">
+						<text class="iconfont icon-zengjia"></text>
+					</view>
+					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
+						<text class="iconfont icon-gengduo"></text>
+					</view>
 				</view>
 			</template>
 		</uni-nav-bar>
@@ -201,6 +267,28 @@ import { computed, ref } from "vue";
 		<!-- 重命名对话框 -->
 		<f-dialog ref="renameDialogRef" :onConfirm="handleRenameConfirm" :onCancel="handleCancel">
 			<input type="text" v-model="renameValue" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="重命名"/>
+		</f-dialog>
+		
+		<!-- 添加操作条 -->
+		<uni-popup ref="addPopup" type="bottom" safe-area>
+			<view class="bg-white flex" style="height: 200rpx;">
+				<!-- 遍历 addList 数组，均分纵向布局 -->
+				<view class="flex flex-1 align-center justify-center flex-column" hover-class="bg-light"
+					v-for="(item, index) in addList" :key="index"
+					@tap="handleAddEvent(item)">
+					<!-- 每个操作的图标，可以传入图标的名称和颜色 -->
+					<text style="width: 110rpx;height: 110rpx;"
+						class="flex align-center justify-center rounded-circle bg-light iconfont"
+						:class="item.icon + ' ' + item.color">
+					</text>
+					<text class="font text-muted">{{ item.name }}</text>
+				</view>
+			</view>
+		</uni-popup>
+		
+		<!-- 新建文件夹对话框 -->
+		<f-dialog ref="newDirDialogRef" :onConfirm="handleNewDirConfirm" :onCancel="handleCancel">
+			<input type="text" v-model="newDirName" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="新建文件夹名称"/>
 		</f-dialog>
 	</view>
 </template>
