@@ -83,13 +83,20 @@ import { computed, ref } from "vue";
 		}
 	})
 	
-	// 删除对话框
+	// 删除对话框ref
 	const deleteDialogRef = ref(null)
+	// 重命名对话框ref
+	const renameDialogRef = ref(null)
 	// 底部操作条处理
 	const handleBottomEvent = (item) => {
 		switch (item.name) {
 			case '删除':
 				deleteDialogRef.value.showPopup()
+				break
+			case '重命名':
+				// 重命名只对单个文件进行，checkList数组中只有一个
+				renameValue.value = checkedList.value[0].name
+				renameDialogRef.value.showPopup()
 				break
 			default:
 				break
@@ -107,6 +114,21 @@ import { computed, ref } from "vue";
 	const handleCancel = () => {
 		console.log('取消');
 		// 执行取消后的逻辑
+	}
+	
+	// 重命名相关
+	const renameValue = ref('')
+	
+	const handleRenameConfirm = () => {
+		if (renameValue === '') {
+			return uni.showToast({
+				title: '文件名不能为空',
+				icon: 'none'
+			})
+		}
+		// 更新元素名称
+		checkedList.value[0].name = renameValue.value
+		renameDialogRef.value.hidePopup()
 	}
 </script>
 	
@@ -175,5 +197,10 @@ import { computed, ref } from "vue";
 		
 		<!-- 删除对话框 -->
 		<f-dialog ref="deleteDialogRef" :onConfirm="handleDeleteConfirm" :onCancel="handleCancel">是否删除选中文件</f-dialog>
+		
+		<!-- 重命名对话框 -->
+		<f-dialog ref="renameDialogRef" :onConfirm="handleRenameConfirm" :onCancel="handleCancel">
+			<input type="text" v-model="renameValue" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="重命名"/>
+		</f-dialog>
 	</view>
 </template>
