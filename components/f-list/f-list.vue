@@ -46,16 +46,19 @@
 </script>	
 	
 <template>
-	<view class="p-3 flex align-center border bottom-border" @click="onSelect">
+	<view class="p-3 flex align-center border bottom-border" @click="emits('click')">
+		
 		<!-- 左侧：用计算属性得出动态样式，显示不同的文件图标 -->
 		<text class="iconfont" :class="iconClass" style="font-size: 60rpx;"></text>
+		
 		<!-- 中间：渲染父组件传入的对象中的名称和事件 -->
 		<view class="flex flex-column ml-3" style="line-height: 1.2;">
 			<text class="font-md">{{ props.item.name }}</text>
 			<text class="font-sm text-muted mt-2">{{ props.item.create_time }}</text>
 		</view>
+		
 		<!-- 右侧：根据传入对象的checked属性进行渲染 -->
-		<view class="ml-auto flex align-center justify-center">
+		<view class="ml-auto flex align-center justify-center" @click="onSelect">
 			<!-- 未选择，灰色圈圈 -->
 			<text v-if="!props.item.checked" style="width: 30rpx; height: 30rpx; border: 1px solid #999;" class="rounded-circle"></text>
 			<!-- 选中，字体图标 -->

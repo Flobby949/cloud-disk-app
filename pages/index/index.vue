@@ -11,6 +11,7 @@ import { computed, ref } from "vue";
 			type: 'image',
 			name: '风景.jpg',
 			create_time: '2023-07-01 21:26',
+			url: "https://i2.100024.xyz/2023/07/03/12zwnum.webp",
 			checked: true
 		},
 		{
@@ -20,9 +21,23 @@ import { computed, ref } from "vue";
 			checked: true
 		},
 		{
+			type: 'image',
+			name: '风景.jpg',
+			create_time: '2023-07-01 21:26',
+			url: "https://i2.100024.xyz/2023/07/03/12zw8jj.webp",
+			checked: false
+		},
+		{
 			type: 'text',
 			name: '记事本.txt',
 			create_time: '2023-07-02 20:26',
+			checked: false
+		},
+		{
+			type: 'image',
+			name: '风景.jpg',
+			create_time: '2023-07-01 21:26',
+			url: "https://i2.100024.xyz/2023/07/03/12zwf5j.webp",
 			checked: false
 		},
 		{
@@ -194,6 +209,26 @@ import { computed, ref } from "vue";
 		})
 		newDirDialogRef.value.hidePopup()
 	}
+	
+	// 预览
+	const doEvent = (item) => {
+		console.log(item);
+		switch (item.type) {
+			case 'image': 
+				// 从list中过滤得到全部image文件
+				let images = list.value.filter(i => {
+					return i.type === 'image'
+				})
+				// 预览图片
+				uni.previewImage({
+					current: item.url,
+					urls: images.map(i => i.url)
+				})
+				break;
+			default:
+				break;
+		}
+	}
 </script>
 	
 <template>
@@ -240,7 +275,11 @@ import { computed, ref } from "vue";
 			</view>
 		</view>
 	
-		<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @my-select="handleSelect(index)" />
+		<f-list v-for="(item, index) in list" 
+			:key="index" :item="item" 
+			:index="index" 
+			@click="doEvent(item)"
+			@my-select="handleSelect(index)" />
 		
 		<!-- 底部操作条 -->
 		<!-- 选中元素才显示操作条 -->
