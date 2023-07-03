@@ -14,9 +14,8 @@
 	const changeTab = (index) => {
 		tabIndex.value = index
 	}
-	
-	const list = ref([
-		{
+
+	const list = ref([{
 			type: 'image',
 			name: '风景.jpg',
 			create_time: '2023-07-01 21:26',
@@ -63,7 +62,7 @@
 			download: 7
 		}
 	])
-	
+
 	// 下载状态属性
 	// 下载中
 	const downloading = computed(() => {
@@ -89,10 +88,11 @@
 			<view class="flex-1 flex flex-column align-center justify-center" v-for="(item, index) in tabBars"
 				:key="index" :class="index === tabIndex ? 'text-main' : ''" @click="changeTab(index)">
 				<text> {{ item.name }} </text>
-				<text style="height: 8rpx;width: 140rpx;" class="rounded" :class="tabIndex === index ? 'bg-main' : 'bg-white'"></text>
+				<text style="height: 8rpx;width: 140rpx;" class="rounded"
+					:class="tabIndex === index ? 'bg-main' : 'bg-white'"></text>
 			</view>
 		</view>
-		
+
 		<!-- 列表内容 -->
 		<swiper :duration="250" class="flex flex-1" :current="tabIndex" @change="swiperChange">
 			<!-- 下载列表 -->
@@ -107,15 +107,16 @@
 					<f-list v-for="(item, index) in downloading" :key="'i' + index" :item="item" :index="index">
 						<view class="flex align-center text-main" style="height: 70rpx;">
 							<text class="iconfont icon-zanting"></text>
-							<text class="ml-1">{{ item.download }}</text>
+							<text class="ml-1" style="width: 50rpx;">{{ item.download }}</text>
 						</view>
 						<progress slot="bottom" :percent="item.download" active-color="#009cff" :stroke-width="4" />
 					</f-list>
-					
+
 					<view class="p-2 border-bottom border-light-secondary font text-muted">
 						下载完成({{ downloaded.length }})
 					</view>
-					<f-list v-for="(item, index) in downloaded" :key="'d' + index" :item="item" :index="index" />
+					<f-list v-for="(item, index) in downloaded" :key="'d' + index" :item="item" :index="index"
+						:showRight="false" />
 				</scroll-view>
 			</swiper-item>
 			<!-- 上传列表 -->

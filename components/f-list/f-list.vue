@@ -66,12 +66,13 @@
 			<!-- 右侧：根据传入对象的checked属性进行渲染,如果 showRight 为true，显示默认插槽-->
 			<view class="ml-auto" v-if="props.showRight">
 				<slot>
-					<view class="ml-auto flex align-center justify-center" @click.stop="onSelect">
+					<view class="flex align-center justify-center" style="width: 70rpx; height: 70rpx;" @click.stop="onSelect">
 						<!-- 未选择，灰色圈圈 -->
-						<text v-if="!props.item.checked" style="width: 25rpx; height: 25rpx;"
-							class="rounded-circle border"></text>
+						<text v-if="!props.item.checked" style="width: 30rpx; height: 30rpx;"
+							class="rounded-circle border border-dark"></text>
 						<!-- 选中，字体图标 -->
-						<text v-else class="iconfont icon-xuanze-yixuan text-primary" style="font-size: 40px;"></text>
+						<text v-else class="iconfont icon-xuanze-yixuan text-primary" 
+							style="font-size: 30px;"></text>
 					</view>
 				</slot>
 			</view>
