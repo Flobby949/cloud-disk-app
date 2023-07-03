@@ -58,7 +58,7 @@
 		</view>
 		
 		<!-- 右侧：根据传入对象的checked属性进行渲染 -->
-		<view class="ml-auto flex align-center justify-center" @click="onSelect">
+		<view class="ml-auto flex align-center justify-center" @click.stop="onSelect">
 			<!-- 未选择，灰色圈圈 -->
 			<text v-if="!props.item.checked" style="width: 30rpx; height: 30rpx; border: 1px solid #999;" class="rounded-circle"></text>
 			<!-- 选中，字体图标 -->

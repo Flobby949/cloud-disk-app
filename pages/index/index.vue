@@ -5,20 +5,21 @@ import { computed, ref } from "vue";
 			type: 'dir',
 			name: '我的笔记',
 			create_time: '2023-07-01 20:26',
-			checked: true
+			checked: false
 		},
 		{
 			type: 'image',
 			name: '风景.jpg',
 			create_time: '2023-07-01 21:26',
 			url: "https://i2.100024.xyz/2023/07/03/12zwnum.webp",
-			checked: true
+			checked: false
 		},
 		{
 			type: 'video',
 			name: 'uniapp实战教程.mp4',
+			data: "https://flobby.oss-cn-shenzhen.aliyuncs.com/post/865691909-1-208.mp4",
 			create_time: '2023-07-01 19:26',
-			checked: true
+			checked: false
 		},
 		{
 			type: 'image',
@@ -224,9 +225,14 @@ import { computed, ref } from "vue";
 					current: item.url,
 					urls: images.map(i => i.url)
 				})
-				break;
+				break
+			case 'video': 
+				uni.navigateTo({
+					url: `../video/video?url=${item.data}&title=${item.name}`
+				})
+				break
 			default:
-				break;
+				break
 		}
 	}
 </script>
