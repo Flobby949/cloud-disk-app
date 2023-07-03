@@ -235,6 +235,26 @@ import { computed, ref } from "vue";
 				break
 		}
 	}
+	
+	// 排序相关
+	const sortIndex = ref(0)
+	const sortOptions = ref([
+		{
+			name: '按名称排序'
+		},
+		{
+			name: '按时间排序'
+		}
+	])
+	
+	const sortPopup = ref(null)
+	const openSortPopup = () => {
+		sortPopup.value.open()
+	}
+	const changeSort = (index) => {
+		sortIndex.value = index
+		sortPopup.value.close()
+	}
 </script>
 	
 <template>
@@ -249,7 +269,7 @@ import { computed, ref } from "vue";
 					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openAddPopup">
 						<text class="iconfont icon-zengjia"></text>
 					</view>
-					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3">
+					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openSortPopup">
 						<text class="iconfont icon-gengduo"></text>
 					</view>
 				</view>
@@ -336,4 +356,16 @@ import { computed, ref } from "vue";
 			<input type="text" v-model="newDirName" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="新建文件夹名称"/>
 		</f-dialog>
 	</view>
+	
+	<!-- 文件排序对话框 -->
+	<uni-popup ref="sortPopup" type="bottom">
+		<view class="bg-white">
+			<view v-for="(item,index) in sortOptions" :key="index" 
+				class="flex align-center justify-center py-3 border-bottom border-light-secondary"
+				:class="index === sortIndex ? 'text-main' : 'text-dark'" hover-class="bg-light"
+				@click="changeSort(index)">
+				{{ item.name }}
+			</view>
+		</view>
+	</uni-popup>
 </template>
