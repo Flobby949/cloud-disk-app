@@ -39,10 +39,11 @@
         }
         ,{
             "path" : "pages/login/login",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+            "style": {
+				"navigationBarTextStyle": "black",
+            	"app-plus": {
+            		"titleNView": false
+            	}
             }
             
         }
