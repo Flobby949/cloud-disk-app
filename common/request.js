@@ -1,7 +1,7 @@
 export default {
 	// 全局配置
 	common: {
-		baseUrl: 'http://127.0.0.1:7001',
+		baseUrl: 'http://192.168.1.7:7001',
 		header: {
 			'Content-Type': 'application/json;charset=UTF-8',
 		},

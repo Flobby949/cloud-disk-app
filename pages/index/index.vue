@@ -5,17 +5,26 @@
 	} from "vue";
 	
 	import {
-		onLoad
+		onLoad, onShow
 	} from "@dcloudio/uni-app"
 	
 	import $H from "/common/request.js"
 	onLoad(() => {
 		getList()
 	})
+	onShow(() => {
+		// 本地存储读取路由数组
+		let dirsLocal = uni.getStorageSync('dirs')
+		if (dirsLocal) {
+			dirs.value = JSON.parse(dirsLocal)
+		}
+		getList()
+	})
 	// 获取文件列表
 	const getList = () => {
+		let orderby = sortOptions.value[sortIndex.value].key
 		// 获取文件列表，file_id为0表示根目录全部数据
-		$H.get('/file?file_id=0', {
+		$H.get(`/file?file_id=${file_id.value}&orderby=${orderby}`, {
 			token: true
 		}).then(res => {
 			list.value = formatList(res.rows)
@@ -23,6 +32,35 @@
 	}
 	
 	const list = ref([])
+	let dirs = ref([])
+	
+	// 向后端请求文件数组时的fileId
+	const file_id = computed(() => {
+		const len = dirs.value.length
+		if (len === 0) {
+			return 0
+		}
+		return dirs.value[len - 1].id
+	})
+	
+	const current = computed(() => {
+		const len = dirs.value.length
+		if (len === 0) {
+			return false
+		}
+		return dirs.value[len - 1]
+	})
+	
+	const changeDir = () => {
+		// 不知道为什么doEvent点击一下触发两次，所以要弹栈两次
+		dirs.value.pop()
+		dirs.value.pop()
+		getList()
+		uni.setStorage({
+			key: 'dirs',
+			data: JSON.stringify(dirs.value)
+		})
+	}
 	
 	const formatList = (fileList) => {
 		return fileList.map(item => {
@@ -203,7 +241,6 @@
 
 	// 预览
 	const doEvent = (item) => {
-		console.log(item);
 		switch (item.type) {
 			case 'image':
 				// 从list中过滤得到全部image文件
@@ -221,6 +258,17 @@
 					url: `../video/video?url=${item.url}&title=${item.name}`
 				})
 				break
+			case 'dir': 
+				dirs.value.push({
+					id: item.id,
+					name: item.name
+				})
+				getList()
+				uni.setStorage({
+					key: 'dirs',
+					data: JSON.stringify(dirs.value)
+				})
+				break
 			default:
 				break
 		}
@@ -229,10 +277,12 @@
 	// 排序相关
 	const sortIndex = ref(0)
 	const sortOptions = ref([{
-			name: '按名称排序'
+			name: '按名称排序',
+			key: 'name'
 		},
 		{
-			name: '按时间排序'
+			name: '按时间排序',
+			key: 'created_time'
 		}
 	])
 
@@ -242,6 +292,7 @@
 	}
 	const changeSort = (index) => {
 		sortIndex.value = index
+		getList()
 		sortPopup.value.close()
 	}
 </script>
@@ -251,7 +302,11 @@
 		<!-- 自定义导航栏 -->
 		<uni-nav-bar v-if="checkedList.length === 0">
 			<template v-slot:left>
-				<text class="font-md ml-3 text-right text-white">首页</text>
+				<view class="flex align-center justify-center bg-light rounded-circle ml-3"
+					style="width: 60rpx; height: 60rpx;" @tap="changeDir" v-if="current">
+					<text class="iconfont icon-fanhui"></text>
+				</view>
+				<text class="font-md ml-3 text-right text-white">{{ current ? current.name : '首页'}}</text>
 			</template>
 			<template v-slot:right>
 				<view class="flex flex-row">
