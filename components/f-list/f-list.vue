@@ -60,7 +60,7 @@
 			<!-- 中间：渲染父组件传入的对象中的名称和事件 -->
 			<view class="flex flex-column ml-3" style="line-height: 1.2;">
 				<text class="font-md">{{ props.item.name }}</text>
-				<text class="font-sm text-muted mt-2">{{ props.item.create_time }}</text>
+				<text class="font-sm text-muted mt-2">{{ props.item.created_time }}</text>
 			</view>
 
 			<!-- 右侧：根据传入对象的checked属性进行渲染,如果 showRight 为true，显示默认插槽-->

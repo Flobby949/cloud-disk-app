@@ -8,62 +8,39 @@
 		onLoad
 	} from "@dcloudio/uni-app"
 	
+	import $H from "/common/request.js"
 	onLoad(() => {
-		uni.request({
-			url: 'http://127.0.0.1:7001/list',
-			success: (res) => {
-				console.log(res);
+		getList()
+	})
+	// 获取文件列表
+	const getList = () => {
+		// 获取文件列表，file_id为0表示根目录全部数据
+		$H.get('/file?file_id=0', {
+			token: true
+		}).then(res => {
+			list.value = formatList(res.rows)
+		})
+	}
+	
+	const list = ref([])
+	
+	const formatList = (fileList) => {
+		return fileList.map(item => {
+			let type = 'none'
+			// isdir属性为1，为文件夹
+			if (item.isdir === 1) {
+				type = 'dir'
+			} else {
+				// ext 属性值是mime类型，例如“image/png”，获取 / 前面一段，得到文件类型
+				type = item.ext.split('/')[0] || 'none'
+			}
+			return {
+				type, 
+				checked: false,
+				...item
 			}
 		})
-	})
-	
-	const list = ref([{
-			type: 'dir',
-			name: '我的笔记',
-			create_time: '2023-07-01 20:26',
-			checked: false
-		},
-		{
-			type: 'image',
-			name: '风景.jpg',
-			create_time: '2023-07-01 21:26',
-			url: "https://i2.100024.xyz/2023/07/03/12zwnum.webp",
-			checked: false
-		},
-		{
-			type: 'video',
-			name: 'uniapp实战教程.mp4',
-			data: "https://flobby.oss-cn-shenzhen.aliyuncs.com/post/865691909-1-208.mp4",
-			create_time: '2023-07-01 19:26',
-			checked: false
-		},
-		{
-			type: 'image',
-			name: '风景.jpg',
-			create_time: '2023-07-01 21:26',
-			url: "https://i2.100024.xyz/2023/07/03/12zw8jj.webp",
-			checked: false
-		},
-		{
-			type: 'text',
-			name: '记事本.txt',
-			create_time: '2023-07-02 20:26',
-			checked: false
-		},
-		{
-			type: 'image',
-			name: '风景.jpg',
-			create_time: '2023-07-01 21:26',
-			url: "https://i2.100024.xyz/2023/07/03/12zwf5j.webp",
-			checked: false
-		},
-		{
-			type: 'none',
-			name: '压缩包.rar',
-			create_time: '2023-07-02 22:26',
-			checked: false
-		}
-	])
+	}
 
 	const handleSelect = (index) => {
 		list.value[index].checked = !list.value[index].checked
@@ -241,7 +218,7 @@
 				break
 			case 'video':
 				uni.navigateTo({
-					url: `../video/video?url=${item.data}&title=${item.name}`
+					url: `../video/video?url=${item.url}&title=${item.name}`
 				})
 				break
 			default:
