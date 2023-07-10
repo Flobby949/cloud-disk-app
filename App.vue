@@ -4,14 +4,11 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			// 初始化用户信息
+			store.dispatch('unitUser')
 		},
 		onShow: function() {
 			console.log('App Show')
-			console.log(store.state.username);
-			SH.get('/list').then(res => {
-				console.log('请求后端');
-				console.log(res);
-			})
 		},
 		onHide: function() {
 			console.log('App Hide')
