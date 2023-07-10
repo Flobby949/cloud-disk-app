@@ -1,7 +1,23 @@
 <script setup>
-import { computed, ref } from "vue";
-	const list = ref([
-		{
+	import {
+		computed,
+		ref
+	} from "vue";
+	
+	import {
+		onLoad
+	} from "@dcloudio/uni-app"
+	
+	onLoad(() => {
+		uni.request({
+			url: 'http://127.0.0.1:7001/list',
+			success: (res) => {
+				console.log(res);
+			}
+		})
+	})
+	
+	const list = ref([{
 			type: 'dir',
 			name: '我的笔记',
 			create_time: '2023-07-01 20:26',
@@ -48,27 +64,26 @@ import { computed, ref } from "vue";
 			checked: false
 		}
 	])
-	
+
 	const handleSelect = (index) => {
 		list.value[index].checked = !list.value[index].checked
 	}
-	
+
 	const checkedList = computed(() => {
 		return list.value.filter(item => item.checked)
 	})
-	
+
 	const handleCheckAll = (checked) => {
 		list.value.forEach(item => {
 			item.checked = checked
 		})
 	}
-	
+
 	// 操作菜单
 	const actions = computed(() => {
 		// 超过一个，批量删除和下载
 		if (checkedList.value.length > 1) {
-			return [
-				{
+			return [{
 					icon: "icon-xiazai",
 					name: "下载"
 				},
@@ -78,8 +93,7 @@ import { computed, ref } from "vue";
 				}
 			]
 		} else {
-			return [
-				{
+			return [{
 					icon: "icon-xiazai",
 					name: "下载"
 				},
@@ -98,7 +112,7 @@ import { computed, ref } from "vue";
 			]
 		}
 	})
-	
+
 	// 删除对话框ref
 	const deleteDialogRef = ref(null)
 	// 重命名对话框ref
@@ -126,15 +140,15 @@ import { computed, ref } from "vue";
 			icon: 'success'
 		})
 	}
-	
+
 	const handleCancel = () => {
 		console.log('取消');
 		// 执行取消后的逻辑
 	}
-	
+
 	// 重命名相关
 	const renameValue = ref('')
-	
+
 	const handleRenameConfirm = () => {
 		if (renameValue === '') {
 			return uni.showToast({
@@ -146,10 +160,9 @@ import { computed, ref } from "vue";
 		checkedList.value[0].name = renameValue.value
 		renameDialogRef.value.hidePopup()
 	}
-	
+
 	// 新增
-	const addList = ref([
-		{
+	const addList = ref([{
 			icon: 'icon-file-b-6',
 			color: 'text-success',
 			name: '上传图片'
@@ -170,17 +183,17 @@ import { computed, ref } from "vue";
 			name: '新建文件夹'
 		}
 	])
-	
+
 	const addPopup = ref(null)
 	// 打开操作条
 	const openAddPopup = () => {
 		addPopup.value.open()
 	}
-	
+
 	// 新建文件相关
 	const newDirDialogRef = ref(null)
 	const newDirName = ref('')
-	
+
 	// 处理添加操作条的各种事件
 	const handleAddEvent = (item) => {
 		addPopup.value.close()
@@ -189,7 +202,7 @@ import { computed, ref } from "vue";
 				newDirDialogRef.value.showPopup()
 		}
 	}
-	
+
 	const handleNewDirConfirm = () => {
 		if (newDirName.value === '') {
 			return uni.showToast({
@@ -210,12 +223,12 @@ import { computed, ref } from "vue";
 		})
 		newDirDialogRef.value.hidePopup()
 	}
-	
+
 	// 预览
 	const doEvent = (item) => {
 		console.log(item);
 		switch (item.type) {
-			case 'image': 
+			case 'image':
 				// 从list中过滤得到全部image文件
 				let images = list.value.filter(i => {
 					return i.type === 'image'
@@ -226,7 +239,7 @@ import { computed, ref } from "vue";
 					urls: images.map(i => i.url)
 				})
 				break
-			case 'video': 
+			case 'video':
 				uni.navigateTo({
 					url: `../video/video?url=${item.data}&title=${item.name}`
 				})
@@ -235,18 +248,17 @@ import { computed, ref } from "vue";
 				break
 		}
 	}
-	
+
 	// 排序相关
 	const sortIndex = ref(0)
-	const sortOptions = ref([
-		{
+	const sortOptions = ref([{
 			name: '按名称排序'
 		},
 		{
 			name: '按时间排序'
 		}
 	])
-	
+
 	const sortPopup = ref(null)
 	const openSortPopup = () => {
 		sortPopup.value.open()
@@ -256,7 +268,7 @@ import { computed, ref } from "vue";
 		sortPopup.value.close()
 	}
 </script>
-	
+
 <template>
 	<view>
 		<!-- 自定义导航栏 -->
@@ -266,16 +278,18 @@ import { computed, ref } from "vue";
 			</template>
 			<template v-slot:right>
 				<view class="flex flex-row">
-					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openAddPopup">
+					<view style="width: 60rpx; height: 60rpx;"
+						class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openAddPopup">
 						<text class="iconfont icon-zengjia"></text>
 					</view>
-					<view style="width: 60rpx; height: 60rpx;" class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openSortPopup">
+					<view style="width: 60rpx; height: 60rpx;"
+						class="flex align-center justify-center bg-light rounded-circle mr-3" @tap="openSortPopup">
 						<text class="iconfont icon-gengduo"></text>
 					</view>
 				</view>
 			</template>
 		</uni-nav-bar>
-		
+
 		<uni-nav-bar v-else>
 			<template #left>
 				<text class="font-md ml-3 text-light" @click="handleCheckAll(false)">取消</text>
@@ -285,7 +299,7 @@ import { computed, ref } from "vue";
 				<text class="font-md mr-3 text-light" @click="handleCheckAll(true)">全选</text>
 			</template>
 		</uni-nav-bar>
-		
+
 		<!-- 搜索框 -->
 		<view class="px-3 py-2">
 			<!-- 父相子绝 -->
@@ -296,51 +310,44 @@ import { computed, ref } from "vue";
 					<text class="iconfont icon-sousuo"></text>
 				</view>
 				<!-- 输入框左侧留空，放置搜索图标 -->
-				<input type="text" style="height: 70rpx; padding-left: 70rpx;"
-					class="bg-light font-md rounded-circle" placeholder="搜索文件">
+				<input type="text" style="height: 70rpx; padding-left: 70rpx;" class="bg-light font-md rounded-circle"
+					placeholder="搜索文件">
 			</view>
 		</view>
-	
-		<f-list v-for="(item, index) in list" 
-			:key="index" :item="item" 
-			:index="index" 
-			@click="doEvent(item)"
+
+		<f-list v-for="(item, index) in list" :key="index" :item="item" :index="index" @click="doEvent(item)"
 			@my-select="handleSelect(index)" />
-		
+
 		<!-- 底部操作条 -->
 		<!-- 选中元素才显示操作条 -->
 		<view v-if="checkedList.length > 0">
 			<!-- 设置操作条容器样式，固定顶部，flex布局，垂直拉升 -->
 			<view class="flex align-stretch bg-main text-white fixed-bottom" style="height: 115rpx;">
 				<!-- 根据操作菜单个数等分容器，:hover-class实现点击变色 -->
-				<view class="flex-1 flex flex-column align-center justify-center"
-					style="line-height: 1.5;"
-					v-for="(item, index) in actions"
-					:key="index"
-					hover-class="bg-hover-primary"
-					@click="handleBottomEvent(item)"
-					>
+				<view class="flex-1 flex flex-column align-center justify-center" style="line-height: 1.5;"
+					v-for="(item, index) in actions" :key="index" hover-class="bg-hover-primary"
+					@click="handleBottomEvent(item)">
 					<text class="iconfont" :class="item.icon"></text>
 					{{ item.name }}
 				</view>
 			</view>
 		</view>
-		
+
 		<!-- 删除对话框 -->
 		<f-dialog ref="deleteDialogRef" :onConfirm="handleDeleteConfirm" :onCancel="handleCancel">是否删除选中文件</f-dialog>
-		
+
 		<!-- 重命名对话框 -->
 		<f-dialog ref="renameDialogRef" :onConfirm="handleRenameConfirm" :onCancel="handleCancel">
-			<input type="text" v-model="renameValue" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="重命名"/>
+			<input type="text" v-model="renameValue" class="flex-1 bg-light rounded px-2" style="height: 95rpx;"
+				placeholder="重命名" />
 		</f-dialog>
-		
+
 		<!-- 添加操作条 -->
 		<uni-popup ref="addPopup" type="bottom" safe-area>
 			<view class="bg-white flex" style="height: 200rpx;">
 				<!-- 遍历 addList 数组，均分纵向布局 -->
 				<view class="flex flex-1 align-center justify-center flex-column" hover-class="bg-light"
-					v-for="(item, index) in addList" :key="index"
-					@tap="handleAddEvent(item)">
+					v-for="(item, index) in addList" :key="index" @tap="handleAddEvent(item)">
 					<!-- 每个操作的图标，可以传入图标的名称和颜色 -->
 					<text style="width: 110rpx;height: 110rpx;"
 						class="flex align-center justify-center rounded-circle bg-light iconfont"
@@ -350,17 +357,18 @@ import { computed, ref } from "vue";
 				</view>
 			</view>
 		</uni-popup>
-		
+
 		<!-- 新建文件夹对话框 -->
 		<f-dialog ref="newDirDialogRef" :onConfirm="handleNewDirConfirm" :onCancel="handleCancel">
-			<input type="text" v-model="newDirName" class="flex-1 bg-light rounded px-2" style="height: 95rpx;" placeholder="新建文件夹名称"/>
+			<input type="text" v-model="newDirName" class="flex-1 bg-light rounded px-2" style="height: 95rpx;"
+				placeholder="新建文件夹名称" />
 		</f-dialog>
 	</view>
-	
+
 	<!-- 文件排序对话框 -->
 	<uni-popup ref="sortPopup" type="bottom">
 		<view class="bg-white">
-			<view v-for="(item,index) in sortOptions" :key="index" 
+			<view v-for="(item,index) in sortOptions" :key="index"
 				class="flex align-center justify-center py-3 border-bottom border-light-secondary"
 				:class="index === sortIndex ? 'text-main' : 'text-dark'" hover-class="bg-light"
 				@click="changeSort(index)">
