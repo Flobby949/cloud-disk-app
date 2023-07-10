@@ -91,14 +91,14 @@ export default {
 		options.url = url
 		options.data = data
 		options.method = 'POST'
-		returnthis.request(options)
+		return this.request(options)
 	},
 	// delete请求
 	del(url, data = {}, options = {}) {
 		options.url = url
 		options.data = data
 		options.method = 'DELETE'
-		returnthis.request(options)
+		return this.request(options)
 	},
 	// 上传文件
 	upload(url, data, onProgress = false) {

@@ -2,14 +2,16 @@
 	import {
 		ref
 	} from "vue";
-
+	import $H from '/common/request.js'
+	import store from '/store'
+	
 	// 登录或注册
 	const type = ref("login")
 
 	// 表单
 	const form = ref({
-		username: '',
-		password: '',
+		username: 'Flobby',
+		password: '123456',
 		repassword: ''
 	})
 
@@ -20,11 +22,29 @@
 
 	// 按钮点击事件
 	const handleClick = () => {
-		if (type.value === 'login') {
-			uni.switchTab({
-				url: '../index/index'
+		let msg = type.value === 'login' ? '登录' : '注册'
+		$H.post('/'+type.value, form.value).then(res => {
+			uni.showToast({
+				title: msg + "成功",
+				icon: 'success',
+				duration: 1000
 			})
-		}
+			
+			if (type.value === 'login') {
+				store.dispatch('login', res).then(res => {
+					uni.switchTab({
+						url: '../index/index'
+					})
+				})
+			} else {
+				form.value = {
+					username: '',
+					password: '',
+					repassword: ''
+				}
+				changeType()
+			}
+		})
 	}
 </script>
 

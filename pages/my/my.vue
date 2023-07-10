@@ -1,4 +1,13 @@
 <script setup>
+	import { onShow } from "@dcloudio/uni-app"
+	import store from '/store'
+	
+	onShow(() => {
+		if (store.state.user !== null) {
+			console.log(store.state.user);
+		}
+	})
+	
 	const logout = () => {
 		uni.navigateTo({
 			url: '../login/login'
