@@ -123,9 +123,6 @@ export default {
 				},
 				formData: data.formData || {},
 				success: (res) => {
-					console.log("***************");
-					console.log(res);
-					console.log("***************");
 					if (res.statusCode !== 200) {
 						result(false)
 						return uni.showToast({

@@ -265,6 +265,27 @@
 						})
 					}
 				})
+				break
+			case '上传视频':
+				uni.chooseVideo({
+					count: 1,
+					success: (res) => {
+						let name = ''
+						let size = 0
+						// 取文件名
+						name = res.tempFilePath.substring(res.tempFilePath.lastIndexOf('/') + 1)
+						size = res.size
+						// 上传
+						upload({
+							path: res.tempFilePath,
+							name,
+							type: 'video',
+							size
+						})
+					}
+				})
+				break
+			default: break
 		}
 	}
 
