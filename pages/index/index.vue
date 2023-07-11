@@ -326,6 +326,16 @@
 		getList()
 		sortPopup.value.close()
 	}
+	
+	// 搜索功能，关键词为空就请求全部数据
+	const handleSearch = (e) => {
+		if (e.detail.value === '') {
+			return getList()
+		} 
+		$H.get('/file/search?keyword=' + e.detail.value, {token:true}).then(res => {
+			list.value = formatList(res.rows)
+		})
+	}
 </script>
 
 <template>
@@ -374,7 +384,7 @@
 				</view>
 				<!-- 输入框左侧留空，放置搜索图标 -->
 				<input type="text" style="height: 70rpx; padding-left: 70rpx;" class="bg-light font-md rounded-circle"
-					placeholder="搜索文件">
+					placeholder="搜索文件" @input="handleSearch">
 			</view>
 		</view>
 
