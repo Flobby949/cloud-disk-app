@@ -52,6 +52,27 @@ const store = createStore({
 				})
 			}
 		},
+		// 创建下载任务
+		createDownloadJob({state}, obj) {
+			state.downloadList.unshift(obj)
+			uni.setStorage({
+				key: 'download_' + state.user.id,
+				data: JSON.stringify(state.downloadList)
+			})
+		},
+		// 更新下载进度
+		updateDownloadJob({state}, obj) {
+			let i = state.downloadList.findIndex(item => item.key === obj.key)
+			if (i !== -1) {
+				// 更新progress值和下载状态
+				state.downloadList[i].progress = obj.progress
+				state.downloadList[i].status = obj.status
+				uni.setStorage({
+					key: 'download_' + state.user.id,
+					data: JSON.stringify(state.downloadList)
+				})
+			}
+		},
 		login({
 			state
 		}, user) {

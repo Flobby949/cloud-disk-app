@@ -153,10 +153,59 @@
 				renameValue.value = checkedList.value[0].name
 				renameDialogRef.value.showPopup()
 				break
+			case '下载':
+				download()
+				break
 			default:
 				break
 		}
 	}
+	
+	const download = () => {
+		checkedList.value.forEach(item => {
+			if (item.isdir === 0) {
+				const key = genId(8)
+				// 下载对象
+				let obj = {
+					name: item.name,
+					type: item.type,
+					size: item.size,
+					key,
+					progress: 0,
+					status: true,
+					created_time: new Date().getTime()
+				}
+				// 创建下载任务
+				store.dispatch('createDownloadJob', obj)
+				let url = item.url
+				// 调用uniapp下载api
+				let d = uni.downloadFile({
+					url,
+					success: (res) => {
+						console.log(res);
+						if (res.statusCode === 200) {
+							uni.saveFile({
+								tempFilePath: item.tempFilePath
+							})
+							
+						}
+					}
+				})
+				d.onProgressUpdate(res => {
+					store.dispatch('updateDownloadJob', {
+						progress: res.progress,
+						status: true,
+						key
+					})
+				})
+			}
+		})
+		uni.showToast({
+			title: '加入下载队列',
+			icon: 'none'
+		})
+	}
+	
 	const handleDeleteConfirm = () => {
 		// loading过渡
 		uni.showLoading({
