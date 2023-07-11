@@ -23,7 +23,7 @@
 		if (user.value.total_size === 0) {
 			return 0
 		}
-		return (user.value.used_size / user.value.total_size) / 100
+		return (user.value.used_size / user.value.total_size) * 100
 	})
 
 	// 获取最新空间大小，dispatch提交给vuex更新数据
@@ -67,7 +67,7 @@
 			</view>
 		</view>
 		<view class="p-3">
-			<progress percent="80" class="mb-2" active stroke-width="5" />
+			<progress :percent="percent" class="mb-2" active stroke-width="5" />
 			<view class="flex align-center justify-between font">
 				<text class="text-light-muted">总量：{{ byteToSize(user.total_size) }}</text>
 				<text class="text-warning">已用：{{ byteToSize(user.used_size) }}</text>
