@@ -136,7 +136,15 @@
 	const handleBottomEvent = (item) => {
 		switch (item.name) {
 			case '删除':
-				deleteDialogRef.value.showPopup()
+				uni.showModal({
+					title: '提示',
+					content: '确定删除吗?',
+					success: (res) => {
+						if (res.confirm) {
+							handleDeleteConfirm()
+						}
+					}
+				})
 				break
 			case '重命名':
 				// 重命名只对单个文件进行，checkList数组中只有一个
@@ -148,11 +156,23 @@
 		}
 	}
 	const handleDeleteConfirm = () => {
-		// 对 list 过滤，留下未被选中的元素，选中即被删除
-		list.value = list.value.filter(item => !item.checked)
-		uni.showToast({
-			title: '删除成功',
-			icon: 'success'
+		// loading过渡
+		uni.showLoading({
+			title: '删除中...',
+			mask: false
+		})
+		// 删除接口需要 “1,,2,3”格式参数，map遍历用 , 连接
+		let ids = checkedList.value.map(item => item.id).join(',')
+		$H.post('/file/delete', {ids}, {token:true}).then(res => {
+			// 重新请求数据
+			getList()
+			uni.showToast({
+				title: '删除成功',
+				icon: 'success'
+			})
+		})
+		.finally(() => {
+			uni.hideLoading()
 		})
 	}
 
