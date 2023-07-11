@@ -171,8 +171,18 @@
 				icon: 'none'
 			})
 		}
-		// 更新元素名称
-		checkedList.value[0].name = renameValue.value
+		$H.post('/file/rename', {
+			id: checkedList.value[0].id,
+			file_id: file_id.value,
+			name: renameValue.value
+		}, {token:true}).then(res => {
+			// 更新元素名称
+			checkedList.value[0].name = renameValue.value
+			uni.showToast({
+				title: '重命名成功',
+				icon: 'none'
+			})
+		})
 		renameDialogRef.value.hidePopup()
 	}
 
