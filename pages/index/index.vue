@@ -225,18 +225,19 @@
 				icon: 'none'
 			})
 		}
-		// 添加新文件
-		list.value.push({
-			type: 'dir',
-			name: newDirName.value,
-			create_time: '2023-07-03 01:32',
-			checked: false
-		})
-		return uni.showToast({
-			title: '新建文件夹成功',
-			icon: 'none'
+		// 请求新增文件夹接口
+		$H.post('/file/createdir', {
+			file_id: file_id.value,
+			name: newDirName.value
+		}, { token: true }).then(res => {
+			getList()
+			uni.showToast({
+				title: '新建文件夹成功',
+				icon: 'none'
+			})
 		})
 		newDirDialogRef.value.hidePopup()
+		newDirName.value = ''
 	}
 
 	// 预览
