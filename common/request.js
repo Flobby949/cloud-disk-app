@@ -22,7 +22,6 @@ export default {
 		// 请求
 		return new Promise((res, rej) => {
 			// 请求前
-			console.log(options);
 			// token 验证
 			if (options.token) {
 				let token = uni.getStorageSync('token')
@@ -124,6 +123,9 @@ export default {
 				},
 				formData: data.formData || {},
 				success: (res) => {
+					console.log("***************");
+					console.log(res);
+					console.log("***************");
 					if (res.statusCode !== 200) {
 						result(false)
 						return uni.showToast({

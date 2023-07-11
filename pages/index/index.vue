@@ -3,12 +3,14 @@
 		computed,
 		ref
 	} from "vue";
-	
+
 	import {
-		onLoad, onShow
+		onLoad,
+		onShow
 	} from "@dcloudio/uni-app"
-	
+
 	import $H from "/common/request.js"
+	import store from "/store"
 	onLoad(() => {
 		getList()
 	})
@@ -30,10 +32,10 @@
 			list.value = formatList(res.rows)
 		})
 	}
-	
+
 	const list = ref([])
 	let dirs = ref([])
-	
+
 	// 向后端请求文件数组时的fileId
 	const file_id = computed(() => {
 		const len = dirs.value.length
@@ -42,7 +44,7 @@
 		}
 		return dirs.value[len - 1].id
 	})
-	
+
 	const current = computed(() => {
 		const len = dirs.value.length
 		if (len === 0) {
@@ -50,7 +52,7 @@
 		}
 		return dirs.value[len - 1]
 	})
-	
+
 	const changeDir = () => {
 		// 不知道为什么doEvent点击一下触发两次，所以要弹栈两次
 		dirs.value.pop()
@@ -61,7 +63,7 @@
 			data: JSON.stringify(dirs.value)
 		})
 	}
-	
+
 	const formatList = (fileList) => {
 		return fileList.map(item => {
 			let type = 'none'
@@ -73,7 +75,7 @@
 				type = item.ext.split('/')[0] || 'none'
 			}
 			return {
-				type, 
+				type,
 				checked: false,
 				...item
 			}
@@ -163,17 +165,21 @@
 		})
 		// 删除接口需要 “1,,2,3”格式参数，map遍历用 , 连接
 		let ids = checkedList.value.map(item => item.id).join(',')
-		$H.post('/file/delete', {ids}, {token:true}).then(res => {
-			// 重新请求数据
-			getList()
-			uni.showToast({
-				title: '删除成功',
-				icon: 'success'
+		$H.post('/file/delete', {
+				ids
+			}, {
+				token: true
+			}).then(res => {
+				// 重新请求数据
+				getList()
+				uni.showToast({
+					title: '删除成功',
+					icon: 'success'
+				})
 			})
-		})
-		.finally(() => {
-			uni.hideLoading()
-		})
+			.finally(() => {
+				uni.hideLoading()
+			})
 	}
 
 	const handleCancel = () => {
@@ -195,7 +201,9 @@
 			id: checkedList.value[0].id,
 			file_id: file_id.value,
 			name: renameValue.value
-		}, {token:true}).then(res => {
+		}, {
+			token: true
+		}).then(res => {
 			// 更新元素名称
 			checkedList.value[0].name = renameValue.value
 			uni.showToast({
@@ -245,7 +253,58 @@
 		switch (item.name) {
 			case '新建文件夹':
 				newDirDialogRef.value.showPopup()
+				break
+			case '上传图片':
+				// 选择图片，限制9张
+				uni.chooseImage({
+					count: 9,
+					success: (res) => {
+						// 选择图片成功，循环异步调用上传接口
+						res.tempFiles.forEach(item => {
+							upload(item, 'image')
+						})
+					}
+				})
 		}
+	}
+
+	// 生成唯一 id
+	const genId = (len) => {
+		return Number(Math.random().toString().substr(3, len) + Date.now()).toString(36)
+	}
+
+	// 上传文件
+	const upload = (file, type) => {
+		// 上传文件类型
+		let t = type
+		// 上传key，区分文件
+		const key = genId(8)
+		// 构造上传文件对象，文件名，类型，大小，key，进度，状态，创建时间
+		let obj = {
+			name: file.name,
+			type: t,
+			key,
+			progress: 0,
+			status: true,
+			created_time: new Date().getTime()
+		}
+		// 创建上传任务，通过 dispatch 分发给 vuex，异步上传调度
+		store.dispatch('createUploadJob', obj)
+		// 上传，参数为当前位置的目录id
+		console.log(file_id.value);
+		$H.upload('/upload?file_id=' + file_id.value, {
+			filePath: file.path
+		}, p => {
+			// 更新上传进度
+			store.dispatch('updateUploadJob', {
+				status: true,
+				process: p,
+				key
+			}).then(res => {
+				// 上传成功
+				getList()
+			})
+		})
 	}
 
 	const handleNewDirConfirm = () => {
@@ -259,7 +318,9 @@
 		$H.post('/file/createdir', {
 			file_id: file_id.value,
 			name: newDirName.value
-		}, { token: true }).then(res => {
+		}, {
+			token: true
+		}).then(res => {
 			getList()
 			uni.showToast({
 				title: '新建文件夹成功',
@@ -289,7 +350,7 @@
 					url: `../video/video?url=${item.url}&title=${item.name}`
 				})
 				break
-			case 'dir': 
+			case 'dir':
 				dirs.value.push({
 					id: item.id,
 					name: item.name
@@ -326,13 +387,15 @@
 		getList()
 		sortPopup.value.close()
 	}
-	
+
 	// 搜索功能，关键词为空就请求全部数据
 	const handleSearch = (e) => {
 		if (e.detail.value === '') {
 			return getList()
-		} 
-		$H.get('/file/search?keyword=' + e.detail.value, {token:true}).then(res => {
+		}
+		$H.get('/file/search?keyword=' + e.detail.value, {
+			token: true
+		}).then(res => {
 			list.value = formatList(res.rows)
 		})
 	}
